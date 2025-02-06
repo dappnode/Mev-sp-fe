@@ -30,6 +30,7 @@ export function TotalSubscribersCard({
       isError={isError}
       isLoading={isLoading}
       title="Total Subscribers"
+      tooltip='Subscription states may require up to 20 minutes to be updated.'
       bottomRightText={`${toFixedNoTrailingZeros(
         adjustedPoolFeesPercent || NaN,
         4
