@@ -19,10 +19,6 @@ export function useHandleSubscriptionStatus(
   methodName: 'sub' | 'unsub',
   validatorIds: number | number[]
 ) {
-  // Throwing error if trying to multiunsub
-  if (methodName === 'unsub' && Array.isArray(validatorIds))
-    throw new Error('Mutiple unsubscription not unsported!')
-
   const isMultiAction = Array.isArray(validatorIds)
   const { address } = useAccount()
   const queryClient = useQueryClient()
@@ -66,7 +62,6 @@ export function useHandleSubscriptionStatus(
   const handleSubscription = useCallback(async () => {
     const abi = [...contractInterface] as const
 
-
     try {
       await write({
         abi,
@@ -76,7 +71,11 @@ export function useHandleSubscriptionStatus(
             ? isMultiAction
               ? 'subscribeValidators'
               : 'subscribeValidator'
-            : 'unsubscribeValidator',
+            : methodName === 'unsub'
+            ? isMultiAction
+              ? 'unsubscribeValidators'
+              : 'unsubscribeValidator'
+            : '',
         value:
           methodName === 'sub'
             ? utils.parseEther(totalDepositInString).toBigInt()

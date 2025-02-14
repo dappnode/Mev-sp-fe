@@ -19,8 +19,14 @@ import {
   useReactTable,
   getSortedRowModel,
 } from '@tanstack/react-table'
-import { SubscribeToMevDialog, MultiSubscribeToMevDialog } from '@/components/dialogs/SubscribeToMevDialog'
-import { UnsubscribeToMevDialog } from '@/components/dialogs/UnsubscribeToMevDialog'
+import {
+  SubscribeToMevDialog,
+  MultiSubscribeToMevDialog,
+} from '@/components/dialogs/SubscribeToMevDialog'
+import {
+  MultiUnsubscribeToMevDialog,
+  UnsubscribeToMevDialog,
+} from '@/components/dialogs/UnsubscribeToMevDialog'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { addEthSuffix, shortenEthAddress } from '@/utils/web3'
 import { toFixedNoTrailingZeros } from '@/utils/decimals'
@@ -29,8 +35,14 @@ import type { Validator } from '../types'
 
 const columnHelper = createColumnHelper<Validator>()
 
-const useTableColumns = (table: { getIsAllRowsSelected: () => boolean | undefined; getToggleAllRowsSelectedHandler: () => ChangeEventHandler<HTMLInputElement> | undefined }) =>
-  useMemo(() => [
+const useTableColumns = (table: {
+  getIsAllRowsSelected: () => boolean | undefined
+  getToggleAllRowsSelectedHandler: () =>
+    | ChangeEventHandler<HTMLInputElement>
+    | undefined
+}) =>
+  useMemo(
+    () => [
       columnHelper.accessor('checkbox', {
         header: () => (
           <input
@@ -128,8 +140,9 @@ const useTableColumns = (table: { getIsAllRowsSelected: () => boolean | undefine
           )
         },
       }),
-  ], [table])
-
+    ],
+    [table]
+  )
 
 interface MyValidatorsTableProps {
   data?: Validator[]
@@ -145,9 +158,11 @@ export function MyValidatorsTable({
   serverError,
 }: MyValidatorsTableProps) {
   const { searchInput, setSearchInput, debouncedSearchInput } = useSearchInput()
-  const [showMultiSubscribeDialog, setShowMultiSubscribeDialog] = useState(false);
-  const [selectedValidatorIds, setSelectedValidatorIds] = useState<number[]>([]);
-  const [selectedValidatorKeys, setSelectedValidatorKeys] = useState<`0x${string}`[]>([]);
+  const [showMultiActionsDialog, setShowMultiActionsDialog] = useState(false)
+  const [selectedValidatorIds, setSelectedValidatorIds] = useState<number[]>([])
+  const [selectedValidatorKeys, setSelectedValidatorKeys] = useState<
+    `0x${string}`[]
+  >([])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [columns, setColumns] = useState<ColumnDef<Validator, any>[]>([])
@@ -194,24 +209,30 @@ export function MyValidatorsTable({
     getSortedRowModel: getSortedRowModel(),
   })
 
-  const generatedColumns = useTableColumns(table);
+  const generatedColumns = useTableColumns(table)
 
   useEffect(() => {
     // Update columns when generatedColumns changes
-    setColumns(generatedColumns);
-  }, [generatedColumns]);
+    setColumns(generatedColumns)
+  }, [generatedColumns])
 
   useEffect(() => {
-    const selectedRowsData = table.getSelectedRowModel().rows.map(row => row.original);
-    const validatorIds = selectedRowsData.map(validator => validator.validatorId);
-    const validatorKeys = selectedRowsData.map(validator => validator.validatorKey);
-    setSelectedValidatorKeys(validatorKeys);
-    setSelectedValidatorIds(validatorIds);
+    const selectedRowsData = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original)
+    const validatorIds = selectedRowsData.map(
+      (validator) => validator.validatorId
+    )
+    const validatorKeys = selectedRowsData.map(
+      (validator) => validator.validatorKey
+    )
+    setSelectedValidatorKeys(validatorKeys)
+    setSelectedValidatorIds(validatorIds)
 
     // Show the dialog only if two or more validators are selected
-    setShowMultiSubscribeDialog(validatorIds.length >= 2);
+    setShowMultiActionsDialog(validatorIds.length >= 2)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [table, table.getSelectedRowModel()]);
+  }, [table, table.getSelectedRowModel()])
 
   if (!isConnected) {
     return <NotConnectedWarning title="My Validators" />
@@ -227,11 +248,14 @@ export function MyValidatorsTable({
 
   return (
     <>
-      {showMultiSubscribeDialog && (
-        <MultiSubscribeToMevDialog
-          validatorIds={selectedValidatorIds}
-          validatorKeys={selectedValidatorKeys}
-        />
+      {showMultiActionsDialog && (
+        <div className="flex w-full flex-col gap-2">
+          <MultiSubscribeToMevDialog
+            validatorIds={selectedValidatorIds}
+            validatorKeys={selectedValidatorKeys}
+          />
+          <MultiUnsubscribeToMevDialog validatorIds={selectedValidatorIds} />
+        </div>
       )}
       <TableLayout
         showEmptyMessage

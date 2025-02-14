@@ -30,6 +30,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint64",
+        "name": "validatorID",
+        "type": "uint64"
+      }
+    ],
+    "name": "BanValidator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "withdrawalAddress",
         "type": "address"
@@ -233,6 +246,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint64",
+        "name": "validatorID",
+        "type": "uint64"
+      }
+    ],
+    "name": "UnbanValidator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "sender",
         "type": "address"
@@ -345,6 +371,19 @@
     "name": "addressToVotedReportHash",
     "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64[]",
+        "name": "validatorIDArray",
+        "type": "uint64[]"
+      }
+    ],
+    "name": "banValidators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -646,9 +685,35 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "uint64[]",
+        "name": "validatorIDArray",
+        "type": "uint64[]"
+      }
+    ],
+    "name": "unbanValidators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "uint64", "name": "validatorID", "type": "uint64" }
     ],
     "name": "unsubscribeValidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64[]",
+        "name": "validatorIDArray",
+        "type": "uint64[]"
+      }
+    ],
+    "name": "unsubscribeValidators",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
